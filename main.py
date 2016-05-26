@@ -87,7 +87,7 @@ class DuoChecker:
 
 
 	def getMatchHistory(self):
-		now = 1464058733754 #int(round(time.time()))
+		now = 1464058733754 #int(round(time.time()*1000))
 		url = "https://na.api.pvp.net/api/lol/na/v2.2/matchlist/by-summoner/%s?rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&endTime=%d&api_key=%s" % (self.summonerId,now,KEY)
 		response = requests.get(url)
 		return response.json()
