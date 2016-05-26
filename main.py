@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import requests
 import time
 import json
@@ -9,9 +10,9 @@ from datetime import datetime
 KEY  = "8bf96ba6-e94d-43fc-a892-06eac23bae66"
 
 class DuoChecker:
-	def __init__(self,summonerName,duoName):
-		self.summonerName = summonerName
-		self.duoName = duoName
+	def __init__(self):
+		self.getSummoner()
+		self.getDuo()
 		self.getSummonerId()
 		self.season = None
 		self.calculate()
@@ -48,9 +49,38 @@ class DuoChecker:
 			
 
 	def getSummonerId(self):
-		url = "https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/%s?api_key=%s"% (self.summonerName.lower(),KEY)
+		url = "https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/%s,%s?api_key=%s"% (self.summonerName.lower(),self.duoName.lower(),KEY)
 		response = requests.get(url)
-		self.summonerId = response.json()[self.summonerName.lower()]["id"]
+		try: 
+			summoner = response.json()[self.summonerName.replace(" ","").lower()]
+			self.summonerName = summoner["name"] 
+			self.summonerId = summoner["id"]
+			duo = response.json()[self.duoName.replace(" ","").lower()]
+			self.duoName = duo["name"]
+			self.duoId = duo["id"]
+		except Exception as e:
+			if(response.status_code == 404):
+				print("Neither Summoner nor Duo could be found.")
+				self.getSummoner()
+				self.getDuo()
+				self.getSummonerId()
+			else:
+				e = str(e).replace('\'','')
+				if(e == self.summonerName.lower()):
+					print("%s Could Not Be Found" % self.summonerName)
+					self.getSummoner()
+					self.getSummonerId()
+				elif(e == self.duoName.lower()):
+					print("%s Could Not Be Found" % self.duoName)
+					self.getDuo()
+					self.getSummonerId()
+				else:
+					print( e == self.duoName.lower())
+					print(e)
+					print(self.duoName.lower())
+					sys.exit()
+			
+
 
 	def getMatchHistory(self):
 		now = 1464058733754 #int(round(time.time()))
@@ -91,11 +121,15 @@ class DuoChecker:
 				return {"error": 404, "url": url}
 			else:
 				print(results)
+	def getSummoner(self):
+		self.summonerName = input("Please Input Your Name:")
+	def getDuo(self):
+		self.duoName = input("Please Input Duo's Name:")
 
 
 
 if __name__ == '__main__':
-	DuoChecker("JimmyScene","Camel Jesus")
+	DuoChecker()
 	
 
 	
