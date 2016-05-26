@@ -28,7 +28,11 @@ class DuoChecker:
 			sys.stdout.flush()
 			sys.stdout.write("\r%d%%" % (index*100/total))
 			match=str(match["matchId"])
-			result = self.getMatchResults(match)
+			try:
+				result = self.getMatchResults(match)
+			except Exception as e:
+				print(e)
+				print("Could not get Match Results for: %s" % match)
 			if(result !=-1):
 				if(result["withDuo"]):
 					gamesDuo+=1
@@ -121,6 +125,7 @@ class DuoChecker:
 				return {"error": 404, "url": url}
 			else:
 				print(results)
+				sys.exit()
 	def getSummoner(self):
 		self.summonerName = input("Please Input Your Name:")
 	def getDuo(self):
