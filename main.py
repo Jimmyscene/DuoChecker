@@ -43,11 +43,15 @@ class DuoChecker:
 					if(result["won"]):
 						winsSolo+=1
 			
-		print()
-		print("Duo Winrate: %d%%" % (winsDuo*100/gamesDuo) )
+		sys.stdout.flush()
+		sys.stdout.write("\rResults:\n ")
+		if(gamesDuo>0):
+			print("Duo Winrate: %d%%" % (winsDuo*100/gamesDuo) )
+			print("With Duo:")
+			print("Won: %s Out of %s " %(winsDuo,gamesDuo))
+		else:
+			print("No games found with Duo")
 		print("Solo Winrate: %d%%" % (winsSolo*100/gamesSolo)  )
-		print("With Duo:")
-		print("Won: %s Out of %s " %(winsDuo,gamesDuo))
 		print("Solo: ")
 		print("Won: %s Out of %s " %(winsSolo,gamesSolo))
 			
@@ -87,8 +91,8 @@ class DuoChecker:
 
 
 	def getMatchHistory(self):
-		now = 1464058733754 #int(round(time.time()*1000))
-		url = "https://na.api.pvp.net/api/lol/na/v2.2/matchlist/by-summoner/%s?rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&endTime=%d&api_key=%s" % (self.summonerId,now,KEY)
+		now = int(round(time.time()*1000)) #1464058733754 
+		url = "https://na.api.pvp.net/api/lol/na/v2.2/matchlist/by-summoner/%s?rankedQueues=RANKED_SOLO_5x5&seasons=SEASON2016&endTime=%d&api_key=%s" % (self.summonerId,now,KEY)
 		response = requests.get(url)
 		return response.json()
 
